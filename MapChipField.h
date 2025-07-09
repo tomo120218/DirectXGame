@@ -24,10 +24,9 @@ public:
 		uint32_t yIndex;
 	};
 
-	// 範囲矩形
 	struct Rect {
 		float left;
-		float rigt;
+		float right;
 		float bottom;
 		float top;
 	};
@@ -44,9 +43,9 @@ public:
 
 	MapChipType GetMapChipTypeByIndex(uint32_t xIndex, uint32_t yIndex);
 
-	KamataEngine::Vector3 GetMapChipPositionByIndex(uint32_t xIndex, uint32_t yIndex);
-
-	IndexSet GetMapChipIndexSetByPosition(const KamataEngine::Vector3& position);
+	MapChipField::IndexSet GetMapChipIndexSetByPosition(const KamataEngine::Vector3& position);
 
 	Rect GetRectByIndex(uint32_t xIndex, uint32_t yIndex);
+
+	KamataEngine::Vector3 GetMapChipPositionByIndex(uint32_t xIndex, uint32_t yIndex);
 };

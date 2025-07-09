@@ -21,9 +21,12 @@ class GameScene {
 
 	Skydome* skydome_ = nullptr;
 
+	KamataEngine::Model* modelCameracontoroller_ = nullptr;
+
+	CameraController* cameraController_;
+
 	MapChipField* mapChipField_;
 	void GenerateBlocks();
-	CameraController* cameraController_ = nullptr;
 
 private:
 	uint32_t textureHandle_ = 0;

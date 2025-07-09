@@ -4,7 +4,7 @@
 using namespace KamataEngine;
 
 void GameScene::Initialize() {
-	// textureHandle_ = TextureManager::Load("202.png");
+
 	model_ = Model::Create();
 	camera_.Initialize();
 
@@ -16,24 +16,28 @@ void GameScene::Initialize() {
 
 	skydome_->Initialize(modelSkydome_, &camera_);
 
+	// 座標をマップチップ番号で指定
+	Vector3 playerPosition = mapChipField_->GetMapChipPositionByIndex(1, 18);
+
 	mapChipField_ = new MapChipField();
 	mapChipField_->LoadMapChipCsv("Resources/blocks.csv");
 	GenerateBlocks();
 
 	// 自キャラの生成
 	player_ = new Player();
+	// 自キャラの初期化
+	player_->Initialize(modelPlayer_, &camera_, playerPosition);
 
-	Vector3 playerPosition = mapChipField_->GetMapChipPositionByIndex(1, 18);
-	// カメラ
+	player_->SetMapChipField(mapChipField_);
+
+	// カメラコントローラの初期化
 	cameraController_ = new CameraController();
 	cameraController_->Initialize();
 	cameraController_->SetTarget(player_);
 	cameraController_->Reset();
+
 	CameraController::Rect cameraArea = {12.0f, 100 - 12.0f, 6.0f, 6.0f};
 	cameraController_->SetMovableArea(cameraArea);
-	// 自キャラの初期化
-	player_->Initialize(modelPlayer_, &camera_, playerPosition);
-	player_->SetMapChipField(mapChipField_);
 
 	// ブロック
 	modelBlock_ = Model::CreateFromOBJ("block", true);
@@ -80,8 +84,10 @@ GameScene::~GameScene() {
 
 void GameScene::Update() {
 	player_->Update();
-	skydome_->Update();
+
 	cameraController_->Update();
+
+	skydome_->Update();
 	for (std::vector<KamataEngine::WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) {
 		for (WorldTransform* worldTransformBlock : worldTransformBlockLine) {
 			if (!worldTransformBlock) {
@@ -109,7 +115,7 @@ void GameScene::Update() {
 	} else {
 		camera_.matView = cameraController_->GetViewProjection().matView;
 		camera_.matProjection = cameraController_->GetViewProjection().matProjection;
-		// ビュープロジェクション行列の転送
+
 		camera_.TransferMatrix();
 	}
 
