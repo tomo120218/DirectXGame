@@ -1,5 +1,5 @@
 #include "GameScene.h"
-#include "KamataEngine.h"
+#include <KamataEngine.h>
 #include <Windows.h>
 
 using namespace KamataEngine;
@@ -10,11 +10,11 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	// エンジンの初期化
 	KamataEngine::Initialize(L"LE2D");
 
+	// DirectXCommonインスタンスの取得
 	DirectXCommon* dxCommon = DirectXCommon::GetInstance();
 
 	// ゲームシーンのインスタンス生成
 	GameScene* gameScene = new GameScene();
-
 	// ゲームシーンの初期化
 	gameScene->Initialize();
 
@@ -40,7 +40,6 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 	// ゲームシーンの開放
 	delete gameScene;
-
 	// nullptrの代入
 	gameScene = nullptr;
 
