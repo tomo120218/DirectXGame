@@ -1,5 +1,6 @@
 #pragma once
 #include "KamataEngine.h"
+#include "Fade.h"
 
 using namespace KamataEngine;
 
@@ -31,4 +32,12 @@ private:
 	float counter_ = 0.0f;
 	// 02_12 26枚目
 	bool finished_ = false;
+
+	Fade* fade_ = nullptr;
+	enum class Phase {
+		kFadeIn,
+		kMain,
+		kFadeOut,
+	};
+	Phase phase_ = Phase::kFadeIn;
 };
