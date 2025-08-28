@@ -8,6 +8,7 @@
 #include "skydome.h"
 #include <vector>
 #include "Fade.h"
+#include "Goal.h" 
 
 using namespace KamataEngine;
 
@@ -104,4 +105,7 @@ private:
 	bool finished_ = false;
 
 	Fade* fade_ = nullptr;
+
+	Goal* goal_ = nullptr;
+	Model* goal_model_ = nullptr;
 };

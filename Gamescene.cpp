@@ -99,7 +99,7 @@ void GameScene::Initialize() {
 	// enemy_->Initialize(enemy_model_, &camera_, enemyPosition);
 
 	// 02_10 5枚目（for文の中身全部）
-	for (int32_t i = 0; i < 2; ++i) {
+	for (int32_t i = 0; i < 35; ++i) {
 		Enemy* newEnemy = new Enemy();
 
 		Vector3 enemyPosition = mapChipField_->GetMapChipPositionByIndex(14 + i * 2, 18);
@@ -125,6 +125,10 @@ void GameScene::Initialize() {
 	fade_->Initialize();
 
 	fade_->Start(Fade::Status::FadeIn, 1.0f);
+	goal_model_ = Model::CreateFromOBJ("goal"); // ゴールモデルを用意
+	Vector3 goalPosition = mapChipField_->GetMapChipPositionByIndex(97, 18);
+	goal_ = new Goal();
+	goal_->Initialize(goalPosition, goal_model_, &camera_);
 }
 
 // 02_12 10枚目 GameScene::Update関数で呼び出しておく
@@ -271,6 +275,12 @@ void GameScene::Update() {
 	if (deathParticles_) {
 		deathParticles_->Update();
 	}
+
+	goal_->Update();
+	if (goal_ && goal_->IsPlayerReached(player_->GetWorldPosition())) {
+		finished_ = true;
+		fade_->Start(Fade::Status::FadeOut, 2.0f);
+	}
 }
 
 void GameScene::Draw() {
@@ -307,6 +317,10 @@ void GameScene::Draw() {
 	// 02_11 18枚目 デスパーティクルあれば描画
 	if (deathParticles_) {
 		deathParticles_->Draw();
+	}
+
+	if (goal_) {
+		goal_->Draw();
 	}
 
 	Model::PostDraw();
