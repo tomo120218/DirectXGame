@@ -1,72 +1,49 @@
+#define NOMINMAX
+
 #include "Enemy.h"
+#include "MapChipField.h"
 #include "MyMath.h"
-#include <cassert>
+#include "cassert"
+#include <algorithm>
 #include <numbers>
 
-// 02_09 スライド5枚目
-void Enemy::Initialize(Model* model, Camera* camera, const Vector3& position) {
+using namespace KamataEngine;
+using namespace MathUtility;
 
-	// NULLチェック
+void Enemy::Initialize(KamataEngine::Model* model, KamataEngine::Camera* camera, KamataEngine::Vector3& position) {
 	assert(model);
-
-	// 02_09 7枚目
 	model_ = model;
-	// 02_09 7枚目
-	camera_ = camera;
-	// 02_09 7枚目
 	worldTransform_.Initialize();
 	worldTransform_.translation_ = position;
-	// 02_09 7枚目 角度調整
-	worldTransform_.rotation_.y = std::numbers::pi_v<float> * 3.0f / 2.0f;
-
-	// 02_09 16枚目
+	worldTransform_.rotation_.y = std::numbers::pi_v<float> / -2.0f;
+	camera_ = camera;
 	velocity_ = {-kWalkSpeed, 0, 0};
-	// 02_09 20枚目
-	walkTimer = 0.0f;
+	walkTimer_ = 0.0f;
 }
 
-// 02_09 スライド5枚目
 void Enemy::Update() {
 
-	// 02_09 16枚目 移動
 	worldTransform_.translation_ += velocity_;
 
-	// 02_09 20枚目
-	walkTimer += 1.0f / 60.0f;
+	walkTimer_ += 1.0f / 20.0f;
 
-	// 02_09 23枚目 回転アニメーション
-	worldTransform_.rotation_.x = std::sin(std::numbers::pi_v<float> * 2.0f * walkTimer / kWalkMotionTime);
+	// 回転アニメーション
+	worldTransform_.rotation_.x = std::sin(walkTimer_);
 
-	// 02_09 スライド8枚目 ワールド行列更新
-	WorldTransformUpdate(worldTransform_);
+	/*float param = std::sin(walkTimer_);
+	float degree = kWalkMotionAngleStart + kWalkMotionAngleEnd * (param + 1.0f) / 2.0f;
+	worldTransform_.rotation_.x = std::*/
+
+	worldTransform_.matWorld_ = MakeAffineMatrix(worldTransform_.scale_, worldTransform_.rotation_, worldTransform_.translation_);
+	worldTransform_.TransferMatrix();
 }
 
-// 02_09 スライド5枚目
-void Enemy::Draw() {
+void Enemy::Draw() { model_->Draw(worldTransform_, *camera_); }
 
-	// 02_09 スライド9枚目  モデル描画
-	model_->Draw(worldTransform_, *camera_);
-}
-
-// 02_10 スライド14枚目
-AABB Enemy::GetAABB() {
-
-	Vector3 worldPos = GetWorldPosition();
-
-	AABB aabb;
-
-	aabb.min = {worldPos.x - kWidth / 2.0f, worldPos.y - kHeight / 2.0f, worldPos.z - kWidth / 2.0f};
-	aabb.max = {worldPos.x + kWidth / 2.0f, worldPos.y + kHeight / 2.0f, worldPos.z + kWidth / 2.0f};
-
-	return aabb;
-}
-
-// 02_10 スライド14枚目
-Vector3 Enemy::GetWorldPosition() {
-
-	Vector3 worldPos;
-
-	// ワールド行列の平行移動成分を取得（ワールド座標）
+KamataEngine::Vector3 Enemy::GetWorldPosition() {
+	// ワールド座標を入れる変数
+	KamataEngine::Vector3 worldPos;
+	// ワールド行列の平行移動成分取得
 	worldPos.x = worldTransform_.matWorld_.m[3][0];
 	worldPos.y = worldTransform_.matWorld_.m[3][1];
 	worldPos.z = worldTransform_.matWorld_.m[3][2];
@@ -74,8 +51,15 @@ Vector3 Enemy::GetWorldPosition() {
 	return worldPos;
 }
 
-// 02_10 スライド20枚目
-void Enemy::OnCollision(const Player* player) {
-	(void)player;
-	//
+AABB Enemy::GetAABB() {
+	KamataEngine::Vector3 worldPos = GetWorldPosition();
+
+	AABB aabb;
+
+	aabb.min = {(worldPos.x - 0.5f) / 2.0f, (worldPos.y - 0.5f) / 2.0f, (worldPos.z - 0.5f) / 2.0f};
+	aabb.max = {(worldPos.x + 0.5f) / 2.0f, (worldPos.y + 0.5f) / 2.0f, (worldPos.z + 0.5f) / 2.0f};
+
+	return aabb;
 }
+
+void Enemy::OnCollision(const Player* player) { (void)player; }

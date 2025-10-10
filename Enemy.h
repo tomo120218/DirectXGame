@@ -3,51 +3,43 @@
 #include "KamataEngine.h"
 #include "MyMath.h"
 
-using namespace KamataEngine;
+#include <vector>
 
-// 02_10 20枚目
 class Player;
 
-// 02_09 スライド4枚目
 class Enemy {
+private:
+	KamataEngine::WorldTransform worldTransform_;
+	KamataEngine::Model* model_ = nullptr;
+	KamataEngine::Camera* camera_ = nullptr;
+	uint32_t textureHandle_ = 0u;
+
+	std::vector<std::vector<KamataEngine::WorldTransform*>> worldTransformEnemy_;
+
+	KamataEngine::Vector3 velocity_ = {};
+
+	// 敵の移動速度
+	static inline const float kWalkSpeed = 0.05f;
+	// 最初の角度[度]
+	static inline const float kWalkMotionAngleStart = 1.0f;
+	// 最後の角度[度]
+	static inline const float kWalkMotionAngleEnd = 1.0f;
+	// アニメーションの周期となる時間
+	static inline const float kWalkMotionTime = 1.0f;
+	// 経過時間
+	float walkTimer_ = 0.0f;
 
 public:
-	// 02_09 スライド5枚目
-	void Initialize(Model* model, Camera* camera, const Vector3& position);
-	// 02_09 スライド5枚目
+	// 初期化
+	void Initialize(KamataEngine::Model* model, KamataEngine::Camera* camera, KamataEngine::Vector3& position);
+	// 更新
 	void Update();
-	// 02_09 スライド5枚目
+	// 描画
 	void Draw();
-	// 02_10 スライド14枚目
+
+	KamataEngine::Vector3 GetWorldPosition();
+
 	AABB GetAABB();
-	// 02_10 スライド14枚目 ワールド座標を取得
-	Vector3 GetWorldPosition();
-	// 02_10 スライド20枚目 衝突応答
+
 	void OnCollision(const Player* player);
-
-private:
-	// 02_09 6枚目 ザ・ワールド
-	WorldTransform worldTransform_;
-	// 02_09 6枚目 モデル
-	Model* model_ = nullptr;
-	// 02_09 6枚目 カメラ
-	Camera* camera_ = nullptr;
-
-	// 02_09 15枚目
-	static inline const float kWalkSpeed = 0.02f;
-	// 02_09 15枚目
-	Vector3 velocity_ = {};
-
-	// 02_09 19枚目
-	static inline const float kWalkMotionAngleStart = 0.0f;
-	// 02_09 19枚目
-	static inline const float kWalkMotionAngleEnd = 30.0f;
-	// 02_09 19枚目
-	static inline const float kWalkMotionTime = 1.0f;
-	// 02_09 20枚目
-	float walkTimer = 0.0f;
-
-	// 02_10 14枚目 当たり判定サイズ
-	static inline const float kWidth = 0.8f;
-	static inline const float kHeight = 0.8f;
 };
